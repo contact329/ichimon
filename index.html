@@ -61,10 +61,13 @@ header{margin-bottom:28px}
 .shelf-name{font-family:'Shippori Mincho',serif;font-size:15.5px;color:var(--ink);letter-spacing:.05em}
 .shelf-count{font-size:11.5px;color:var(--faint);letter-spacing:.04em}
 .spines{display:flex;gap:13px;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--hair)}
-.spine{position:relative;width:60px;min-height:162px;background:var(--surface2,#18223A);background:linear-gradient(180deg,#1a2336,#141b2b);border:1px solid var(--hair2);border-top:3px solid var(--accent);border-radius:7px;cursor:pointer;display:flex;align-items:flex-start;justify-content:center;padding:14px 6px 28px;transition:transform .14s,border-color .16s}
+.spine{position:relative;width:60px;min-height:162px;background:var(--surface2,#18223A);background:linear-gradient(180deg,#1a2336,#141b2b);border:1px solid var(--hair2);border-top:3px solid var(--accent);border-radius:7px;cursor:pointer;display:flex;align-items:flex-start;justify-content:center;padding:14px 6px 28px;transition:transform .14s,border-color .16s;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .spine:hover{transform:translateY(-4px);border-color:var(--accent)}
-.spine .t{writing-mode:vertical-rl;font-family:'Shippori Mincho',serif;font-size:15px;color:var(--ink);line-height:1.35;max-height:118px;overflow:hidden;letter-spacing:.05em}
-.spine .cnt{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--accent);font-weight:500;letter-spacing:.02em}
+.spine .t{writing-mode:vertical-rl;font-family:'Shippori Mincho',serif;font-size:15px;color:var(--ink);line-height:1.35;max-height:118px;overflow:hidden;letter-spacing:.05em;pointer-events:none}
+.spine .cnt{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--accent);font-weight:500;letter-spacing:.02em;pointer-events:none}
+.spine.dragging{opacity:.3}
+.spine-clone{position:fixed;z-index:200;pointer-events:none;opacity:.94;transform:translate(-50%,-50%);box-shadow:0 14px 34px rgba(0,0,0,.55);margin:0;transition:none}
+.shelf.drop-target .spines{box-shadow:inset 0 0 0 2px var(--accent);border-radius:10px}
 
 /* ===== 本の画面・上部バー ===== */
 .book-bar2{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
@@ -373,15 +376,29 @@ function renderShelfView(q){
     return;
   }
   const match = b => !q || (b.title&&b.title.includes(q)) || (b.author&&b.author.includes(q));
-  const section = (name, list) => {
+  const section = (displayName, shelfValue, list) => {
     const vis = list.filter(match);
     if(!vis.length) return '';
-    return `<div class="shelf"><div class="shelf-head"><span class="shelf-name">${esc(name)}</span><span class="shelf-count">${vis.length}冊</span></div><div class="spines">${vis.map(spineHTML).join('')}</div></div>`;
+    return `<div class="shelf" data-shelf="${esc(shelfValue)}"><div class="shelf-head"><span class="shelf-name">${esc(displayName)}</span><span class="shelf-count">${vis.length}冊</span></div><div class="spines">${vis.map(spineHTML).join('')}</div></div>`;
   };
   let html = '';
-  shelves.forEach(name => { html += section(name, books.filter(b=>b.shelf===name)); });
-  html += section('未分類', books.filter(b=>!b.shelf || !shelves.includes(b.shelf)));
+  shelves.forEach(name => { html += section(name, name, books.filter(b=>b.shelf===name)); });
+  html += section('未分類', '', books.filter(b=>!b.shelf || !shelves.includes(b.shelf)));
   cont.innerHTML = html || '<div class="empty">該当する本がありません</div>';
+}
+function moveBook(dragId, targetShelf, beforeId){
+  const idx = books.findIndex(b=>b.id===dragId); if(idx<0) return;
+  const [bk] = books.splice(idx,1);
+  bk.shelf = targetShelf || '';
+  if(beforeId && beforeId!==dragId){
+    const bi = books.findIndex(b=>b.id===beforeId);
+    books.splice(bi<0?books.length:bi, 0, bk);
+  } else {
+    let lastIdx=-1;
+    books.forEach((b,i)=>{ if((b.shelf||'')===(bk.shelf||'')) lastIdx=i; });
+    books.splice(lastIdx+1, 0, bk);
+  }
+  saveBooks();
 }
 
 /* ============ 概念タグのサジェスト ============ */
@@ -654,7 +671,73 @@ async function writeToFs(){
 $('#brand').addEventListener('click',backToShelf);
 $('#backBtn').addEventListener('click',backToShelf);
 $('#searchInput').addEventListener('input',e=>renderShelfView(e.target.value));
-$('#shelves').addEventListener('click',e=>{ const sp=e.target.closest('.spine'); if(sp&&sp.dataset.id) openBook(sp.dataset.id); });
+(function setupDnD(){
+  const root = $('#shelves');
+  let down=null, drag=null, clone=null, longTimer=null, autoTimer=null;
+  function clearHover(){ document.querySelectorAll('.shelf.drop-target').forEach(s=>s.classList.remove('drop-target')); }
+  function moveClone(x,y){ if(clone){ clone.style.left=x+'px'; clone.style.top=y+'px'; } }
+  function startDrag(){
+    if(!down) return;
+    const sp=down.spine; drag={id:down.id};
+    clone=sp.cloneNode(true); clone.classList.add('spine-clone'); clone.classList.remove('dragging');
+    clone.style.width=sp.getBoundingClientRect().width+'px';
+    document.body.appendChild(clone);
+    sp.classList.add('dragging');
+    try{ root.setPointerCapture(down.ptr); }catch(e){}
+    moveClone(down.cx,down.cy);
+    autoTimer=setInterval(()=>{ if(!drag||!down) return; const y=down.cy; if(y<90) window.scrollBy(0,-14); else if(y>window.innerHeight-90) window.scrollBy(0,14); },16);
+  }
+  function nextSpineId(sp){ const n=sp.nextElementSibling; return (n&&n.classList.contains('spine'))?n.dataset.id:null; }
+  root.addEventListener('pointerdown',e=>{
+    const sp=e.target.closest('.spine'); if(!sp) return;
+    down={spine:sp, x:e.clientX, y:e.clientY, cx:e.clientX, cy:e.clientY, id:sp.dataset.id, mouse:e.pointerType==='mouse', moved:false, ptr:e.pointerId};
+    if(!down.mouse){ longTimer=setTimeout(()=>{ if(down&&!down.moved&&!drag) startDrag(); },280); }
+  });
+  root.addEventListener('pointermove',e=>{
+    if(!down) return;
+    down.cx=e.clientX; down.cy=e.clientY;
+    const dx=Math.abs(e.clientX-down.x), dy=Math.abs(e.clientY-down.y);
+    if(!drag){
+      if(down.mouse && (dx>6||dy>6)) startDrag();
+      else if(!down.mouse && (dx>12||dy>12)){ down.moved=true; clearTimeout(longTimer); }
+      if(!drag) return;
+    }
+    e.preventDefault();
+    moveClone(e.clientX,e.clientY);
+    clearHover();
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const shelf=el&&el.closest('.shelf'); if(shelf) shelf.classList.add('drop-target');
+  });
+  function finish(e){
+    clearTimeout(longTimer); clearInterval(autoTimer); autoTimer=null;
+    try{ root.releasePointerCapture(down&&down.ptr); }catch(e2){}
+    if(drag){
+      const x=(e.clientX||down.cx), y=(e.clientY||down.cy);
+      if(clone){ clone.remove(); clone=null; }
+      document.querySelectorAll('.spine.dragging').forEach(s=>s.classList.remove('dragging'));
+      clearHover();
+      const el=document.elementFromPoint(x,y);
+      const shelf=el&&el.closest('.shelf');
+      if(shelf){
+        const targetShelf=shelf.dataset.shelf||'';
+        const overSpine=el.closest('.spine');
+        let beforeId=null;
+        if(overSpine && overSpine.dataset.id!==drag.id){
+          const r=overSpine.getBoundingClientRect();
+          beforeId=(x < r.left + r.width/2) ? overSpine.dataset.id : nextSpineId(overSpine);
+        }
+        moveBook(drag.id, targetShelf, beforeId);
+        renderShelfView($('#searchInput').value);
+        toast('移動しました');
+      }
+      drag=null; down=null; return;
+    }
+    if(down && !down.moved) openBook(down.id);
+    down=null;
+  }
+  root.addEventListener('pointerup',finish);
+  root.addEventListener('pointercancel',()=>{ clearTimeout(longTimer); clearInterval(autoTimer); autoTimer=null; if(clone){clone.remove();clone=null;} document.querySelectorAll('.spine.dragging').forEach(s=>s.classList.remove('dragging')); clearHover(); drag=null; down=null; });
+})();
 $('#addBookBtn').addEventListener('click',()=>openBookModal('add'));
 $('#editBookBtn').addEventListener('click',()=>{ if(!currentBookId){ toast('本が選ばれていません'); return; } openBookModal('edit'); });
 $('#bookSaveBtn').addEventListener('click',saveBookModal);
