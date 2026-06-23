@@ -191,6 +191,7 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
     <div class="toolbar">
       <input class="t search" id="searchInput" placeholder="本を検索">
       <button class="ghost sm" id="addBookBtn">＋ 新しい本</button>
+      <button class="ghost sm" id="fetchAllBtn">表紙取得</button>
       <button class="ghost sm" id="shelfMgrBtn">棚を管理</button>
     </div>
     <div id="shelves"></div>
@@ -394,7 +395,7 @@ function backToShelf(){
 function spineHTML(b){
   const n = loadCards(b.id).length;
   const cover = b.cover
-    ? `<div class="bc-cover"><img src="${esc(b.cover)}" alt="" loading="lazy" onerror="this.closest('.bc-cover').classList.add('noimg');this.remove();"><span class="bc-fallback">${esc(b.title)}</span></div>`
+    ? `<div class="bc-cover"><img src="${esc(b.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.bc-cover').classList.add('noimg');this.remove();"><span class="bc-fallback">${esc(b.title)}</span></div>`
     : `<div class="bc-cover noimg"><span class="bc-fallback">${esc(b.title)}</span></div>`;
   const rate = b.rating ? `<span class="bc-rate">★ ${esc(String(b.rating))}</span>` : '';
   return `<div class="spine" data-id="${b.id}">
@@ -524,11 +525,9 @@ function delCard(id){
 }
 
 /* ============ 表紙の自動取得 ============ */
-async function fetchCover(title, author){
-  if(!title) return '';
+async function gbThumb(q){
   try{
-    const q = encodeURIComponent(`intitle:${title}`+(author?` inauthor:${author}`:''));
-    const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=5&country=JP`);
+    const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=5&country=JP`);
     if(!r.ok) return '';
     const j = await r.json();
     for(const it of (j.items||[])){
@@ -539,14 +538,32 @@ async function fetchCover(title, author){
   }catch(e){}
   return '';
 }
+async function fetchCover(title, author){
+  if(!title) return '';
+  return (await gbThumb(`intitle:${title}`+(author?` inauthor:${author}`:'')))
+      || (await gbThumb(title+(author?' '+author:'')))
+      || '';
+}
 function showCoverPreview(u){
-  $('#coverPreview').innerHTML = u ? `<img src="${esc(u)}" alt="" style="height:120px;border-radius:6px;border:1px solid var(--hair2);object-fit:cover">` : '';
+  $('#coverPreview').innerHTML = u ? `<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" style="height:120px;border-radius:6px;border:1px solid var(--hair2);object-fit:cover">` : '';
 }
 function applyCoverAutoFetch(b){
   if(!b || b.cover) return;
   fetchCover(b.title, b.author).then(u=>{
     if(u && !b.cover){ b.cover=u; saveBooks(); if($('#shelfView').classList.contains('active')) renderShelfView($('#searchInput').value); }
   });
+}
+async function fetchAllCovers(){
+  const targets = books.filter(b=>!b.cover);
+  if(!targets.length){ toast('全ての本に表紙があります'); return; }
+  const btn=$('#fetchAllBtn'); btn.disabled=true; btn.textContent='取得中…';
+  let got=0;
+  for(const b of targets){
+    const u = await fetchCover(b.title, b.author);
+    if(u){ b.cover=u; got++; saveBooks(); if($('#shelfView').classList.contains('active')) renderShelfView($('#searchInput').value); }
+  }
+  btn.disabled=false; btn.textContent='表紙取得';
+  toast(got? `${got}冊の表紙を取得しました` : '表紙が見つかりませんでした');
 }
 
 /* ============ 本の追加・編集 ============ */
@@ -824,6 +841,7 @@ $('#bShelf').addEventListener('change',e=>{
     else { fillShelfSelect(''); }
   }
 });
+$('#fetchAllBtn').addEventListener('click',fetchAllCovers);
 $('#shelfMgrBtn').addEventListener('click',()=>{ renderShelfMgr(); $('#shelfMgrOv').classList.add('show'); });
 $('#addShelfBtn').addEventListener('click',addShelf);
 $('#newShelfName').addEventListener('keydown',e=>{ if(e.key==='Enter') addShelf(); });
