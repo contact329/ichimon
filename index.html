@@ -22,7 +22,7 @@
   --panel:#11172490; --panel-solid:#121826;
   --inset:rgba(255,255,255,.035);
   --hair:rgba(228,234,246,.075); --hair2:rgba(228,234,246,.14);
-  --ink:#E8EDF7; --sub:#8E99B1; --faint:#576074;
+  --ink:#E8EDF7; --sub:#8E99B1; --faint:#5C667F;
   --accent:#E0A85F; --accent-ink:#241809; --accent-soft:rgba(224,168,95,.10);
   --cool:#A7C2E6; --cool-bg:rgba(120,160,220,.10);
   --danger:#E08878;
@@ -42,17 +42,38 @@ body{
 .serif{font-family:'Shippori Mincho',serif}
 
 /* ===== ヘッダー ===== */
-header{margin-bottom:34px}
-.title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:baseline;gap:14px}
+header{margin-bottom:28px}
+.brand{display:flex;align-items:baseline;gap:14px;cursor:pointer;width:fit-content}
 .app-title{font-family:'Shippori Mincho',serif;font-size:30px;font-weight:600;letter-spacing:.16em;color:var(--ink)}
 .app-title b{color:var(--accent);font-weight:600}
 .app-sub{font-family:'Shippori Mincho',serif;color:var(--sub);font-size:12.5px;letter-spacing:.1em}
-.book-bar{display:flex;gap:8px;align-items:center;margin-top:24px;flex-wrap:wrap}
-.book-select{flex:1;min-width:180px;font-family:'Shippori Mincho',serif;font-size:16px;font-weight:500;padding:12px 14px;border:1px solid var(--hair2);border-radius:11px;background:var(--inset);color:var(--ink);cursor:pointer;letter-spacing:.02em}
-.book-select:focus{outline:none;border-color:var(--accent)}
 
-/* ===== セクション（旧カード） ===== */
+.view{display:none}
+.view.active{display:block}
+
+/* ===== ツールバー（本棚） ===== */
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:24px;flex-wrap:wrap}
+.toolbar .search{flex:1;min-width:150px}
+
+/* ===== 本棚 ===== */
+.shelf{margin-bottom:26px}
+.shelf-head{display:flex;align-items:baseline;gap:10px;margin-bottom:13px}
+.shelf-name{font-family:'Shippori Mincho',serif;font-size:15.5px;color:var(--ink);letter-spacing:.05em}
+.shelf-count{font-size:11.5px;color:var(--faint);letter-spacing:.04em}
+.spines{display:flex;gap:13px;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--hair)}
+.spine{position:relative;width:60px;min-height:162px;background:var(--surface2,#18223A);background:linear-gradient(180deg,#1a2336,#141b2b);border:1px solid var(--hair2);border-top:3px solid var(--accent);border-radius:7px;cursor:pointer;display:flex;align-items:flex-start;justify-content:center;padding:14px 6px 28px;transition:transform .14s,border-color .16s}
+.spine:hover{transform:translateY(-4px);border-color:var(--accent)}
+.spine .t{writing-mode:vertical-rl;font-family:'Shippori Mincho',serif;font-size:15px;color:var(--ink);line-height:1.35;max-height:118px;overflow:hidden;letter-spacing:.05em}
+.spine .cnt{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--accent);font-weight:500;letter-spacing:.02em}
+
+/* ===== 本の画面・上部バー ===== */
+.book-bar2{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.book-bar2 .btitle{font-family:'Shippori Mincho',serif;font-size:20px;color:var(--ink);letter-spacing:.04em;flex:1;min-width:120px}
+.backbtn{background:transparent;border:1px solid var(--hair2);color:var(--sub);font-size:13px;padding:8px 13px;border-radius:10px;cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:.16s;white-space:nowrap}
+.backbtn:hover{border-color:var(--accent);color:var(--ink)}
+.bv-shelf{font-size:11px;color:var(--accent);letter-spacing:.06em;margin-bottom:22px;min-height:14px}
+
+/* ===== カード共通 ===== */
 .card{background:var(--panel);border:1px solid var(--hair);border-radius:15px;padding:24px 24px 26px;margin-bottom:16px;backdrop-filter:blur(6px)}
 .card-title{font-size:12px;font-weight:500;margin-bottom:18px;display:flex;align-items:center;gap:9px;color:#9BA6BD;letter-spacing:.1em}
 .card-title .bar{width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block;flex:none}
@@ -65,7 +86,7 @@ header{margin-bottom:34px}
 .cta:hover{transform:translateY(-1px);filter:brightness(1.07)}
 .cta:active{transform:translateY(0)}
 .cta.full{width:100%}
-.ghost{background:transparent;border:1px solid var(--hair2);color:var(--sub);font-weight:500;font-size:13px;padding:10px 16px;border-radius:10px;cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:.16s}
+.ghost{background:transparent;border:1px solid var(--hair2);color:var(--sub);font-weight:500;font-size:13px;padding:10px 16px;border-radius:10px;cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:.16s;white-space:nowrap}
 .ghost:hover{border-color:var(--accent);color:var(--ink)}
 .ghost.sm{padding:8px 14px;font-size:12.5px}
 
@@ -73,12 +94,12 @@ header{margin-bottom:34px}
 label.fld{display:block;font-size:12.5px;font-weight:400;color:#AEB7CC;margin:20px 0 9px;letter-spacing:.02em}
 label.fld:first-of-type{margin-top:0}
 label.fld .req{color:var(--accent)}
-textarea,input.t{width:100%;font-family:inherit;font-size:15px;padding:12px 14px;border:1px solid var(--hair2);border-radius:10px;background:var(--inset);color:var(--ink);resize:vertical;line-height:1.7;transition:border-color .16s,box-shadow .16s}
+textarea,input.t,select.t{width:100%;font-family:inherit;font-size:15px;padding:12px 14px;border:1px solid var(--hair2);border-radius:10px;background:var(--inset);color:var(--ink);resize:vertical;line-height:1.7;transition:border-color .16s,box-shadow .16s}
+select.t{resize:none;cursor:pointer}
 textarea::placeholder,input.t::placeholder{color:#727E96}
-textarea:focus,input.t:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea:focus,input.t:focus,select.t:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 textarea.quote{font-family:'Shippori Mincho',serif;font-size:17px;min-height:70px;color:var(--ink);line-height:1.8}
 
-/* なぜ刺さったか＝主役（控えめに強調） */
 .why-wrap{background:var(--accent-soft);border:1px solid rgba(224,168,95,.20);border-radius:12px;padding:16px;margin:18px 0}
 .why-wrap label.fld{margin:0 0 9px;color:var(--accent);font-size:12.5px;font-weight:400;letter-spacing:.03em}
 .why-wrap textarea{border-color:rgba(224,168,95,.22);background:rgba(9,12,20,.4)}
@@ -87,7 +108,6 @@ textarea.quote{font-family:'Shippori Mincho',serif;font-size:17px;min-height:70p
 .row2{display:flex;gap:10px;flex-wrap:wrap}
 .row2 > div{flex:1;min-width:120px}
 
-/* 概念サジェスト */
 .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:2px}
 .chip{border:1px solid var(--hair2);background:transparent;color:var(--sub);padding:6px 13px;border-radius:999px;font-size:12.5px;font-weight:400;cursor:pointer;user-select:none;letter-spacing:.02em;transition:.14s}
 .chip:hover{border-color:var(--accent);color:var(--ink)}
@@ -113,7 +133,6 @@ textarea.quote{font-family:'Shippori Mincho',serif;font-size:17px;min-height:70p
 .hl .ins::before{content:"→ ";color:var(--accent);font-weight:400}
 .hl .meta{display:flex;gap:8px;align-items:center;margin-top:13px;flex-wrap:wrap}
 .tag{font-size:10.5px;font-weight:400;padding:3px 10px;border-radius:999px;background:var(--cool-bg);color:var(--cool);letter-spacing:.02em}
-.tag.concept{background:var(--cool-bg);color:var(--cool)}
 .hl .acts{margin-left:auto;display:flex;gap:2px}
 .hl .acts span{cursor:pointer;color:var(--faint);font-size:12px;padding:3px 8px;border-radius:6px;letter-spacing:.04em}
 .hl .acts span:hover{color:var(--accent);background:var(--inset)}
@@ -134,7 +153,12 @@ textarea.quote{font-family:'Shippori Mincho',serif;font-size:17px;min-height:70p
 .modal .mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
 pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;padding:16px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.7;white-space:pre-wrap;word-break:break-word;max-height:46vh;overflow:auto;color:var(--sub)}
 
-/* トースト */
+/* 棚マネージャ */
+.shelf-mgr-list{display:flex;flex-direction:column;gap:8px}
+.shelf-mgr-row{display:flex;align-items:center;gap:6px}
+.shelf-mgr-row input{flex:1}
+.shelf-mgr-row .ghost{padding:8px 11px;font-size:13px}
+
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:var(--accent-ink);padding:12px 24px;border-radius:11px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:90;letter-spacing:.04em}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -145,77 +169,86 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
 <div class="wrap">
 
   <header>
-    <div class="title-row">
-      <div class="brand">
-        <div class="app-title">一<b>文</b></div>
-        <div class="app-sub">残った一文と、その理由。</div>
-      </div>
-      <button class="ghost sm" id="exportBtn">イケスに書き出す</button>
-    </div>
-    <div class="book-bar">
-      <select class="book-select" id="bookSelect"></select>
-      <button class="ghost sm" id="addBookBtn">＋ 新しい本</button>
-      <button class="ghost sm" id="editBookBtn">編集</button>
+    <div class="brand" id="brand">
+      <div class="app-title">一<b>文</b></div>
+      <div class="app-sub">残った一文と、その理由。</div>
     </div>
   </header>
 
-  <!-- NotebookLM 導線 -->
-  <div class="card" id="nbCard">
-    <div class="card-title"><span class="bar"></span>NotebookLM / リサーチ</div>
-    <div class="nb-row">
-      <button class="ghost sm" id="openNbBtn">この本を NotebookLM で開く</button>
+  <!-- ===== 本棚ホーム ===== -->
+  <div class="view" id="shelfView">
+    <div class="toolbar">
+      <input class="t search" id="searchInput" placeholder="本を検索">
+      <button class="ghost sm" id="addBookBtn">＋ 新しい本</button>
+      <button class="ghost sm" id="shelfMgrBtn">棚を管理</button>
     </div>
-    <div class="prompt-label">「ソースを探す」に貼る（タイトル自動挿入）</div>
-    <div class="prompt-row">
-      <span class="chip" data-p="overview">① 解説・書評・批判</span>
-      <span class="chip" data-p="author">② 著者の声・論争</span>
-      <span class="chip" data-p="apply">③ 実務での応用事例</span>
-    </div>
-    <div class="prompt-label">チャットで対話する</div>
-    <div class="prompt-row">
-      <span class="chip" data-p="dialog">ソクラテス式の対話</span>
-    </div>
+    <div id="shelves"></div>
+    <div class="footer-note">データはこのブラウザ内（localStorage）に保存されます</div>
   </div>
 
-  <!-- キャプチャ入力 -->
-  <div class="card" id="captureCard">
-    <div class="card-title"><span class="bar"></span>一文を残す</div>
-
-    <label class="fld">印象に残った一文 <span class="req">＊</span></label>
-    <textarea class="quote" id="fQuote" placeholder="本の中で心に留まった一文・要約を貼る／書く"></textarea>
-
-    <div class="why-wrap">
-      <label class="fld">なぜ印象に残ったか <span class="req">＊</span></label>
-      <textarea id="fWhy" rows="2" placeholder="どこが引っかかった？　驚いた／腑に落ちた／反発した… その理由を一行で"></textarea>
+  <!-- ===== 本の画面 ===== -->
+  <div class="view" id="bookView">
+    <div class="book-bar2">
+      <button class="backbtn" id="backBtn">← 本棚</button>
+      <div class="btitle" id="bvTitle"></div>
+      <button class="ghost sm" id="editBookBtn">編集</button>
+      <button class="ghost sm" id="exportBtn">イケスに書き出す</button>
     </div>
+    <div class="bv-shelf" id="bvShelf"></div>
 
-    <label class="fld">自分の領域への示唆</label>
-    <textarea id="fInsight" rows="2" placeholder="自分の仕事にどう活かす？"></textarea>
-
-    <label class="fld">概念タグ（[[ ]]で囲われる・任意）</label>
-    <input class="t" id="fConcepts" placeholder="損失回避, 希少性">
-    <div class="chips" id="conceptSuggest"></div>
-
-    <div class="row2" style="margin-top:14px">
-      <div>
-        <label class="fld">ページ（任意）</label>
-        <input class="t" id="fPage" placeholder="p.45" inputmode="numeric">
+    <div class="card" id="nbCard">
+      <div class="card-title"><span class="bar"></span>NotebookLM / リサーチ</div>
+      <div class="nb-row">
+        <button class="ghost sm" id="openNbBtn">この本を NotebookLM で開く</button>
+      </div>
+      <div class="prompt-label">「ソースを探す」に貼る（タイトル自動挿入）</div>
+      <div class="prompt-row">
+        <span class="chip" data-p="overview">① 解説・書評・批判</span>
+        <span class="chip" data-p="author">② 著者の声・論争</span>
+        <span class="chip" data-p="apply">③ 実務での応用事例</span>
+      </div>
+      <div class="prompt-label">チャットで対話する</div>
+      <div class="prompt-row">
+        <span class="chip" data-p="dialog">ソクラテス式の対話</span>
       </div>
     </div>
 
-    <div class="form-foot">
-      <button class="cta" id="saveCardBtn">カードを保存</button>
-      <span class="hint" id="editingHint"></span>
+    <div class="card" id="captureCard">
+      <div class="card-title"><span class="bar"></span>一文を残す</div>
+
+      <label class="fld">印象に残った一文 <span class="req">＊</span></label>
+      <textarea class="quote" id="fQuote" placeholder="本の中で心に留まった一文・要約を貼る／書く"></textarea>
+
+      <div class="why-wrap">
+        <label class="fld">なぜ印象に残ったか <span class="req">＊</span></label>
+        <textarea id="fWhy" rows="2" placeholder="どこが引っかかった？　驚いた／腑に落ちた／反発した… その理由を一行で"></textarea>
+      </div>
+
+      <label class="fld">自分の領域への示唆</label>
+      <textarea id="fInsight" rows="2" placeholder="自分の仕事にどう活かす？"></textarea>
+
+      <label class="fld">概念タグ（[[ ]]で囲われる・任意）</label>
+      <input class="t" id="fConcepts" placeholder="損失回避, 希少性">
+      <div class="chips" id="conceptSuggest"></div>
+
+      <div class="row2" style="margin-top:14px">
+        <div>
+          <label class="fld">ページ（任意）</label>
+          <input class="t" id="fPage" placeholder="p.45" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="form-foot">
+        <button class="cta" id="saveCardBtn">カードを保存</button>
+        <span class="hint" id="editingHint"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="bar"></span>この本のハイライト<span class="n" id="hlCount"></span></div>
+      <div class="hl-list" id="hlList"></div>
     </div>
   </div>
-
-  <!-- ハイライト一覧 -->
-  <div class="card">
-    <div class="card-title"><span class="bar"></span>この本のハイライト<span class="n" id="hlCount"></span></div>
-    <div class="hl-list" id="hlList"></div>
-  </div>
-
-  <div class="footer-note">データはこのブラウザ内（localStorage）に保存されます</div>
 </div>
 
 <!-- 本の追加/編集モーダル -->
@@ -226,6 +259,8 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
     <input class="t" id="bTitle" placeholder="影響力の武器">
     <label class="fld">著者</label>
     <input class="t" id="bAuthor" placeholder="ロバート・チャルディーニ">
+    <label class="fld">棚</label>
+    <select class="t" id="bShelf"></select>
     <label class="fld">NotebookLM のURL（任意）</label>
     <input class="t" id="bUrl" placeholder="https://notebooklm.google.com/notebook/...">
     <div class="mfoot">
@@ -233,6 +268,19 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
       <button class="ghost" id="bookCancelBtn">キャンセル</button>
       <button class="cta" id="bookSaveBtn">保存</button>
     </div>
+  </div>
+</div>
+
+<!-- 棚を管理モーダル -->
+<div class="ov" id="shelfMgrOv">
+  <div class="modal">
+    <h3>棚を管理</h3>
+    <div class="shelf-mgr-list" id="shelfMgrList"></div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <input class="t" id="newShelfName" placeholder="新しい棚の名前">
+      <button class="ghost" id="addShelfBtn">追加</button>
+    </div>
+    <div class="mfoot"><button class="cta" id="shelfMgrCloseBtn">閉じる</button></div>
   </div>
 </div>
 
@@ -257,11 +305,13 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
 <script>
 /* ============ 定数 ============ */
 const LS_BOOKS = 'ikesuCapture:books';
+const LS_SHELVES = 'ikesuCapture:shelves';
 const bookKey = id => 'ikesuCapture:book:' + id;
 const DB_NAME = 'ikesuCaptureFS', DB_STORE = 'handles', DIR_KEY = 'tenBooksDir';
 
 /* ============ 状態 ============ */
 let books = [];
+let shelves = [];
 let currentBookId = null;
 let editingCardId = null;
 
@@ -284,24 +334,57 @@ async function copyText(text){
 /* ============ データ ============ */
 function loadBooks(){ try{ books = JSON.parse(localStorage.getItem(LS_BOOKS)) || []; }catch(e){ books=[]; } }
 function saveBooks(){ localStorage.setItem(LS_BOOKS, JSON.stringify(books)); }
+function loadShelves(){ try{ shelves = JSON.parse(localStorage.getItem(LS_SHELVES)) || []; }catch(e){ shelves=[]; } }
+function saveShelves(){ localStorage.setItem(LS_SHELVES, JSON.stringify(shelves)); }
 function loadCards(id){ if(!id) return []; try{ return JSON.parse(localStorage.getItem(bookKey(id))) || []; }catch(e){ return []; } }
 function saveCards(id, cards){ localStorage.setItem(bookKey(id), JSON.stringify(cards)); }
 function currentBook(){ return books.find(b=>b.id===currentBookId) || null; }
 
-/* ============ 本セレクタ ============ */
-function renderBookSelect(){
-  const sel = $('#bookSelect');
-  if(!books.length){
-    sel.innerHTML = '<option value="">本がありません — 「＋新しい本」で追加</option>';
-    currentBookId = null;
-    return;
-  }
-  sel.innerHTML = books.map(b=>`<option value="${b.id}">${esc(b.title)}${b.author?' — '+esc(b.author):''}</option>`).join('');
-  if(!books.find(b=>b.id===currentBookId)) currentBookId = books[0].id;
-  sel.value = currentBookId;
+/* ============ ビュー切替 ============ */
+function showView(v){
+  $('#shelfView').classList.toggle('active', v==='shelf');
+  $('#bookView').classList.toggle('active', v==='book');
+  window.scrollTo(0,0);
+}
+function openBook(id){
+  currentBookId = id; editingCardId = null;
+  const b = currentBook(); if(!b) return;
+  $('#bvTitle').textContent = b.title + (b.author ? ' — '+b.author : '');
+  $('#bvShelf').textContent = (b.shelf && shelves.includes(b.shelf)) ? '棚：'+b.shelf : '棚：未分類';
+  resetForm(); renderHighlights();
+  showView('book');
+}
+function backToShelf(){
+  currentBookId = null;
+  renderShelfView($('#searchInput').value);
+  showView('shelf');
 }
 
-/* ============ 概念タグのサジェスト（表記揺れ防止） ============ */
+/* ============ 本棚 ============ */
+function spineHTML(b){
+  const n = loadCards(b.id).length;
+  return `<div class="spine" data-id="${b.id}"><span class="t">${esc(b.title)}</span><span class="cnt">${n?n+'文':'—'}</span></div>`;
+}
+function renderShelfView(q){
+  q = (q||'').trim();
+  const cont = $('#shelves');
+  if(!books.length){
+    cont.innerHTML = '<div class="empty"><div class="big">本棚は空です</div>「＋新しい本」で最初の一冊を追加しましょう</div>';
+    return;
+  }
+  const match = b => !q || (b.title&&b.title.includes(q)) || (b.author&&b.author.includes(q));
+  const section = (name, list) => {
+    const vis = list.filter(match);
+    if(!vis.length) return '';
+    return `<div class="shelf"><div class="shelf-head"><span class="shelf-name">${esc(name)}</span><span class="shelf-count">${vis.length}冊</span></div><div class="spines">${vis.map(spineHTML).join('')}</div></div>`;
+  };
+  let html = '';
+  shelves.forEach(name => { html += section(name, books.filter(b=>b.shelf===name)); });
+  html += section('未分類', books.filter(b=>!b.shelf || !shelves.includes(b.shelf)));
+  cont.innerHTML = html || '<div class="empty">該当する本がありません</div>';
+}
+
+/* ============ 概念タグのサジェスト ============ */
 function gatherConcepts(){
   const freq = new Map();
   books.forEach(b=>loadCards(b.id).forEach(c=>(c.concepts||[]).forEach(x=>{ if(x) freq.set(x,(freq.get(x)||0)+1); })));
@@ -328,16 +411,12 @@ function renderHighlights(){
   const list = $('#hlList');
   const cards = loadCards(currentBookId);
   $('#hlCount').textContent = cards.length ? cards.length+'枚' : '';
-  if(!currentBookId){
-    list.innerHTML = '<div class="empty"><div class="big">まずは本を1冊追加</div>上の「＋新しい本」から始めましょう</div>';
-    return;
-  }
   if(!cards.length){
     list.innerHTML = '<div class="empty"><div class="big">まだ一文がありません</div>読みながら、心に留まった一文を上で残しましょう</div>';
-    return;
+    renderConceptSuggest(); return;
   }
   list.innerHTML = cards.map(c=>{
-    const concepts = (c.concepts||[]).map(x=>`<span class="tag concept">[[${esc(x)}]]</span>`).join('');
+    const concepts = (c.concepts||[]).map(x=>`<span class="tag">[[${esc(x)}]]</span>`).join('');
     return `<div class="hl" data-id="${c.id}">
       <div class="q">${esc(c.quote)}${c.page?`<span class="pg">（p.${esc(c.page)}）</span>`:''}</div>
       ${c.why?`<div class="why">${esc(c.why)}</div>`:''}
@@ -359,7 +438,7 @@ function resetForm(){
   renderConceptSuggest();
 }
 function saveCard(){
-  if(!currentBookId){ toast('先に本を追加してください'); return; }
+  if(!currentBookId){ toast('先に本を開いてください'); return; }
   const quote = $('#fQuote').value.trim();
   const why = $('#fWhy').value.trim();
   if(!quote){ toast('印象に残った一文を入れてください'); $('#fQuote').focus(); return; }
@@ -394,11 +473,19 @@ function delCard(id){
 
 /* ============ 本の追加・編集 ============ */
 let bookModalMode = 'add';
+function fillShelfSelect(current){
+  const sel = $('#bShelf');
+  sel.innerHTML = '<option value="">未分類</option>'
+    + shelves.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('')
+    + '<option value="__new__">＋ 新しい棚をつくる…</option>';
+  sel.value = (current && shelves.includes(current)) ? current : '';
+}
 function openBookModal(mode){
   bookModalMode = mode;
   const b = mode==='edit' ? currentBook() : null;
   $('#bookModalTitle').textContent = mode==='edit' ? '本を編集' : '新しい本';
   $('#bTitle').value = b?b.title:''; $('#bAuthor').value = b?b.author:''; $('#bUrl').value = b?b.notebooklmUrl||'':'';
+  fillShelfSelect(b ? b.shelf : '');
   $('#deleteBookBtn').style.display = mode==='edit' ? 'inline-block' : 'none';
   $('#bookOv').classList.add('show'); $('#bTitle').focus();
 }
@@ -406,22 +493,45 @@ function saveBookModal(){
   const title = $('#bTitle').value.trim();
   if(!title){ toast('書名を入れてください'); return; }
   const author=$('#bAuthor').value.trim(), url=$('#bUrl').value.trim();
+  let shelf=$('#bShelf').value; if(shelf==='__new__') shelf='';
   if(bookModalMode==='edit'){
-    const b=currentBook(); if(b){ b.title=title; b.author=author; b.notebooklmUrl=url; }
+    const b=currentBook(); if(b){ b.title=title; b.author=author; b.notebooklmUrl=url; b.shelf=shelf; }
+    saveBooks(); $('#bookOv').classList.remove('show');
+    openBook(currentBookId);
   }else{
-    const id=uid(); books.push({id,title,author,status:'読書中',notebooklmUrl:url,created:Date.now()}); currentBookId=id;
+    const id=uid(); books.push({id,title,author,status:'読書中',notebooklmUrl:url,shelf,created:Date.now()});
+    saveBooks(); $('#bookOv').classList.remove('show');
+    openBook(id);
   }
-  saveBooks(); $('#bookOv').classList.remove('show');
-  renderBookSelect(); renderHighlights();
 }
 function deleteBook(){
   const b=currentBook(); if(!b) return;
   if(!confirm(`「${b.title}」と、その一文を全て削除しますか？`)) return;
   localStorage.removeItem(bookKey(b.id));
   books = books.filter(x=>x.id!==b.id);
-  currentBookId = books.length ? books[0].id : null;
   saveBooks(); $('#bookOv').classList.remove('show');
-  renderBookSelect(); renderHighlights();
+  backToShelf();
+}
+
+/* ============ 棚を管理 ============ */
+function renderShelfMgr(){
+  const list = $('#shelfMgrList');
+  list.innerHTML = shelves.length
+    ? shelves.map((s,i)=>`<div class="shelf-mgr-row" data-i="${i}">
+        <input class="t" value="${esc(s)}" data-act="rename">
+        <button class="ghost" data-act="up" title="上へ">▲</button>
+        <button class="ghost" data-act="down" title="下へ">▼</button>
+        <button class="ghost" data-act="del" style="color:var(--danger)">削除</button>
+      </div>`).join('')
+    : '<div class="muted">まだ棚がありません。下で追加できます。</div>';
+}
+function addShelf(){
+  const name = $('#newShelfName').value.trim();
+  if(!name){ return; }
+  if(shelves.includes(name)){ toast('同じ名前の棚があります'); return; }
+  shelves.push(name); saveShelves();
+  $('#newShelfName').value='';
+  renderShelfMgr();
 }
 
 /* ============ NotebookLM / リサーチ プロンプト ============ */
@@ -478,7 +588,7 @@ rating:
   return fm + body;
 }
 function openExport(){
-  if(!currentBookId){ toast('先に本を追加してください'); return; }
+  if(!currentBookId){ toast('先に本を開いてください'); return; }
   const cards = loadCards(currentBookId);
   if(!cards.length){ toast('一文がまだ0枚です'); return; }
   $('#mdPreview').textContent = buildMarkdown();
@@ -541,12 +651,49 @@ async function writeToFs(){
 }
 
 /* ============ イベント ============ */
-$('#bookSelect').addEventListener('change',e=>{ currentBookId=e.target.value; resetForm(); renderHighlights(); });
+$('#brand').addEventListener('click',backToShelf);
+$('#backBtn').addEventListener('click',backToShelf);
+$('#searchInput').addEventListener('input',e=>renderShelfView(e.target.value));
+$('#shelves').addEventListener('click',e=>{ const sp=e.target.closest('.spine'); if(sp&&sp.dataset.id) openBook(sp.dataset.id); });
 $('#addBookBtn').addEventListener('click',()=>openBookModal('add'));
-$('#editBookBtn').addEventListener('click',()=>{ if(!currentBookId){ toast('編集する本がありません'); return; } openBookModal('edit'); });
+$('#editBookBtn').addEventListener('click',()=>{ if(!currentBookId){ toast('本が選ばれていません'); return; } openBookModal('edit'); });
 $('#bookSaveBtn').addEventListener('click',saveBookModal);
 $('#bookCancelBtn').addEventListener('click',()=>$('#bookOv').classList.remove('show'));
 $('#deleteBookBtn').addEventListener('click',deleteBook);
+$('#bShelf').addEventListener('change',e=>{
+  if(e.target.value==='__new__'){
+    const name=(prompt('新しい棚の名前')||'').trim();
+    if(name){ if(!shelves.includes(name)){ shelves.push(name); saveShelves(); } fillShelfSelect(name); }
+    else { fillShelfSelect(''); }
+  }
+});
+$('#shelfMgrBtn').addEventListener('click',()=>{ renderShelfMgr(); $('#shelfMgrOv').classList.add('show'); });
+$('#addShelfBtn').addEventListener('click',addShelf);
+$('#newShelfName').addEventListener('keydown',e=>{ if(e.key==='Enter') addShelf(); });
+$('#shelfMgrCloseBtn').addEventListener('click',()=>{ $('#shelfMgrOv').classList.remove('show'); renderShelfView($('#searchInput').value); });
+$('#shelfMgrList').addEventListener('click',e=>{
+  const row=e.target.closest('.shelf-mgr-row'); if(!row) return;
+  const i=+row.dataset.i, act=e.target.dataset.act;
+  if(act==='del'){
+    const name=shelves[i];
+    if(!confirm(`棚「${name}」を削除しますか？（本は「未分類」に移ります）`)) return;
+    books.forEach(b=>{ if(b.shelf===name) b.shelf=''; }); saveBooks();
+    shelves.splice(i,1); saveShelves(); renderShelfMgr();
+  }else if(act==='up' && i>0){
+    [shelves[i-1],shelves[i]]=[shelves[i],shelves[i-1]]; saveShelves(); renderShelfMgr();
+  }else if(act==='down' && i<shelves.length-1){
+    [shelves[i+1],shelves[i]]=[shelves[i],shelves[i+1]]; saveShelves(); renderShelfMgr();
+  }
+});
+$('#shelfMgrList').addEventListener('change',e=>{
+  if(e.target.dataset.act!=='rename') return;
+  const row=e.target.closest('.shelf-mgr-row'); const i=+row.dataset.i;
+  const newName=e.target.value.trim(); const old=shelves[i];
+  if(!newName){ e.target.value=old; return; }
+  if(newName!==old && shelves.includes(newName)){ toast('同じ名前の棚があります'); e.target.value=old; return; }
+  books.forEach(b=>{ if(b.shelf===old) b.shelf=newName; }); saveBooks();
+  shelves[i]=newName; saveShelves();
+});
 $('#conceptSuggest').addEventListener('click',e=>{ const c=e.target.dataset.c; if(c) addConcept(c); });
 $('#fConcepts').addEventListener('input',renderConceptSuggest);
 $('#saveCardBtn').addEventListener('click',saveCard);
@@ -558,13 +705,14 @@ $('#exportCancelBtn').addEventListener('click',()=>$('#exportOv').classList.remo
 $('#copyMdBtn').addEventListener('click',copyMd);
 $('#downloadMdBtn').addEventListener('click',downloadMd);
 $('#writeFsBtn').addEventListener('click',writeToFs);
-document.addEventListener('keydown',e=>{ if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){ if(!$('#bookOv').classList.contains('show')&&!$('#exportOv').classList.contains('show')) saveCard(); }});
+document.addEventListener('keydown',e=>{ if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){ if($('#bookView').classList.contains('active') && !document.querySelector('.ov.show')) saveCard(); }});
 document.querySelectorAll('.ov').forEach(ov=>ov.addEventListener('click',e=>{ if(e.target===ov) ov.classList.remove('show'); }));
 
 /* ============ 初期化 ============ */
 loadBooks();
-renderBookSelect();
-renderHighlights();
+loadShelves();
+renderShelfView();
+showView('shelf');
 </script>
 </body>
 </html>
