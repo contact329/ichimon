@@ -47,7 +47,7 @@ header{margin-bottom:34px}
 
 /* ===== セクション（旧カード） ===== */
 .card{background:var(--panel);border:1px solid var(--hair);border-radius:15px;padding:24px 24px 26px;margin-bottom:16px;backdrop-filter:blur(6px)}
-.card-title{font-size:11.5px;font-weight:500;margin-bottom:18px;display:flex;align-items:center;gap:9px;color:var(--sub);letter-spacing:.18em}
+.card-title{font-size:12px;font-weight:500;margin-bottom:18px;display:flex;align-items:center;gap:9px;color:#9BA6BD;letter-spacing:.1em}
 .card-title .bar{width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block;flex:none}
 .card-title .n{margin-left:auto;font-size:11px;color:var(--faint);font-weight:400;letter-spacing:.04em}
 .muted{color:var(--sub);font-size:12.5px;line-height:1.7}
@@ -63,17 +63,17 @@ header{margin-bottom:34px}
 .ghost.sm{padding:8px 14px;font-size:12.5px}
 
 /* ===== フォーム ===== */
-label.fld{display:block;font-size:11.5px;font-weight:400;color:var(--sub);margin:18px 0 8px;letter-spacing:.1em}
+label.fld{display:block;font-size:12.5px;font-weight:400;color:#AEB7CC;margin:20px 0 9px;letter-spacing:.02em}
 label.fld:first-of-type{margin-top:0}
 label.fld .req{color:var(--accent)}
 textarea,input.t{width:100%;font-family:inherit;font-size:15px;padding:12px 14px;border:1px solid var(--hair2);border-radius:10px;background:var(--inset);color:var(--ink);resize:vertical;line-height:1.7;transition:border-color .16s,box-shadow .16s}
-textarea::placeholder,input.t::placeholder{color:var(--faint)}
+textarea::placeholder,input.t::placeholder{color:#727E96}
 textarea:focus,input.t:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 textarea.quote{font-family:'Shippori Mincho',serif;font-size:17px;min-height:70px;color:var(--ink);line-height:1.8}
 
 /* なぜ刺さったか＝主役（控えめに強調） */
 .why-wrap{background:var(--accent-soft);border:1px solid rgba(224,168,95,.20);border-radius:12px;padding:16px;margin:18px 0}
-.why-wrap label.fld{margin:0 0 9px;color:var(--accent);font-size:11.5px;font-weight:400;letter-spacing:.12em}
+.why-wrap label.fld{margin:0 0 9px;color:var(--accent);font-size:12.5px;font-weight:400;letter-spacing:.03em}
 .why-wrap textarea{border-color:rgba(224,168,95,.22);background:rgba(9,12,20,.4)}
 .why-wrap textarea:focus{box-shadow:0 0 0 3px rgba(224,168,95,.14)}
 
@@ -114,7 +114,7 @@ textarea.quote{font-family:'Shippori Mincho',serif;font-size:17px;min-height:70p
 .empty .big{font-size:15px;color:var(--accent);font-family:'Shippori Mincho',serif;margin-bottom:7px;letter-spacing:.04em}
 
 .nb-row{display:flex;gap:9px;flex-wrap:wrap}
-.prompt-label{font-size:11px;color:var(--faint);letter-spacing:.12em;margin:18px 0 10px}
+.prompt-label{font-size:11.5px;color:#8E99B1;letter-spacing:.04em;margin:18px 0 10px}
 .prompt-row{display:flex;gap:8px;flex-wrap:wrap}
 .prompt-row .chip{color:var(--sub)}
 .prompt-row .chip:hover{border-color:var(--accent);color:var(--ink)}
@@ -168,7 +168,6 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
     <div class="prompt-row">
       <span class="chip" data-p="dialog">ソクラテス式の対話</span>
     </div>
-    <div class="muted" style="margin-top:11px;font-size:12px">①〜③で「ソースを探す」に貼ってソースを集める → 本のPDFも加えたら、対話プロンプトでチャット深掘り。</div>
   </div>
 
   <!-- キャプチャ入力 -->
@@ -184,10 +183,10 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
     </div>
 
     <label class="fld">自分の領域への示唆</label>
-    <textarea id="fInsight" rows="2" placeholder="Willbe・YouTube・自分の事業にどう活かせる？（任意）"></textarea>
+    <textarea id="fInsight" rows="2" placeholder="自分の仕事にどう活かす？"></textarea>
 
     <label class="fld">概念タグ（[[ ]]で囲われる・任意）</label>
-    <input class="t" id="fConcepts" placeholder="損失回避, 希少性  ← カンマ区切り">
+    <input class="t" id="fConcepts" placeholder="損失回避, 希少性">
     <div class="chips" id="conceptSuggest"></div>
 
     <div class="row2" style="margin-top:14px">
