@@ -8,7 +8,17 @@
 NotebookLM で本と対話し、その学びをここに貯める。AIの対話機能は持たない（NotebookLMに任せる）。
 デザインは「藍墨」— 濃紺 × 琥珀のダークテーマ。
 
-## 起動
+## 開く
+
+**web版（どこからでも・サーバー起動不要）**：
+https://contact329.github.io/ichimon/
+
+- https なので Mac の Chrome / Edge なら「10_books に直接保存」もそのまま使える
+- スマホからも開いて記録できる（直書きは不可 → コピー / .mdをDL）
+- ⚠️ データ（localStorage）は **URLごと** に別管理。web版と下記ローカル版でデータは共有されない。Mac↔スマホの同期もしない（同期はバックエンドが必要な別フェーズ）
+- ホスティング元: GitHub `contact329/ichimon`（main ブランチ root を GitHub Pages 配信）。更新は `git push` で自動反映
+
+## 起動（ローカル版）
 
 **ダブルクリックで起動**（推奨）：
 
