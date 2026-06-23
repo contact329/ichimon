@@ -91,6 +91,8 @@ header{margin-bottom:28px}
 .card-title .n{margin-left:auto;font-size:11px;color:var(--faint);font-weight:400;letter-spacing:.04em}
 .muted{color:var(--sub);font-size:12.5px;line-height:1.7}
 .muted code{color:var(--accent);background:var(--inset);padding:1px 6px;border-radius:5px;font-size:12px}
+.modal a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+#settingsOv .muted{line-height:1.95}
 
 /* ===== ボタン ===== */
 .cta{background:var(--accent);color:var(--accent-ink);border:none;font-weight:600;font-size:14.5px;padding:12px 24px;border-radius:10px;cursor:pointer;font-family:inherit;letter-spacing:.04em;transition:transform .12s,filter .2s}
@@ -193,6 +195,7 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
       <button class="ghost sm" id="addBookBtn">＋ 新しい本</button>
       <button class="ghost sm" id="fetchAllBtn">表紙取得</button>
       <button class="ghost sm" id="shelfMgrBtn">棚を管理</button>
+      <button class="ghost sm" id="settingsBtn">設定</button>
     </div>
     <div id="shelves"></div>
     <div class="footer-note">データはこのブラウザ内（localStorage）に保存されます</div>
@@ -312,6 +315,27 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
       <button class="ghost" id="addShelfBtn">追加</button>
     </div>
     <div class="mfoot"><button class="cta" id="shelfMgrCloseBtn">閉じる</button></div>
+  </div>
+</div>
+
+<!-- 設定モーダル -->
+<div class="ov" id="settingsOv">
+  <div class="modal">
+    <h3>設定</h3>
+    <label class="fld">Google Books APIキー（表紙の自動取得に使用）</label>
+    <input class="t" id="gbKeyInput" placeholder="AIza…">
+    <div class="muted" style="margin-top:12px">
+      無料で作れます（2〜3分）：<br>
+      1. <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener">Google Cloud Console</a> でプロジェクトを作成<br>
+      2. <a href="https://console.cloud.google.com/apis/library/books.googleapis.com" target="_blank" rel="noopener">Books API</a> を「有効にする」<br>
+      3. <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">認証情報</a> →「認証情報を作成」→「APIキー」<br>
+      4. 表示された <code>AIza…</code> をここに貼って保存<br>
+      <span style="color:var(--faint)">※キーはこのブラウザ内だけに保存されます</span>
+    </div>
+    <div class="mfoot">
+      <button class="ghost" id="settingsCancelBtn">閉じる</button>
+      <button class="cta" id="settingsSaveBtn">保存</button>
+    </div>
   </div>
 </div>
 
@@ -527,7 +551,9 @@ function delCard(id){
 /* ============ 表紙の自動取得 ============ */
 async function gbThumb(q){
   try{
-    const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=5&country=JP`);
+    const key = localStorage.getItem('ikesuCapture:gbKey') || '';
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=5&country=JP` + (key?`&key=${encodeURIComponent(key)}`:'');
+    const r = await fetch(url);
     if(!r.ok) return '';
     const j = await r.json();
     for(const it of (j.items||[])){
@@ -843,6 +869,13 @@ $('#bShelf').addEventListener('change',e=>{
 });
 $('#fetchAllBtn').addEventListener('click',fetchAllCovers);
 $('#shelfMgrBtn').addEventListener('click',()=>{ renderShelfMgr(); $('#shelfMgrOv').classList.add('show'); });
+$('#settingsBtn').addEventListener('click',()=>{ $('#gbKeyInput').value=localStorage.getItem('ikesuCapture:gbKey')||''; $('#settingsOv').classList.add('show'); });
+$('#settingsCancelBtn').addEventListener('click',()=>$('#settingsOv').classList.remove('show'));
+$('#settingsSaveBtn').addEventListener('click',()=>{
+  const k=$('#gbKeyInput').value.trim();
+  if(k) localStorage.setItem('ikesuCapture:gbKey',k); else localStorage.removeItem('ikesuCapture:gbKey');
+  $('#settingsOv').classList.remove('show'); toast('保存しました');
+});
 $('#addShelfBtn').addEventListener('click',addShelf);
 $('#newShelfName').addEventListener('keydown',e=>{ if(e.key==='Enter') addShelf(); });
 $('#shelfMgrCloseBtn').addEventListener('click',()=>{ $('#shelfMgrOv').classList.remove('show'); renderShelfView($('#searchInput').value); });
