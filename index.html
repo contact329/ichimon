@@ -60,13 +60,21 @@ header{margin-bottom:28px}
 .shelf-head{display:flex;align-items:baseline;gap:10px;margin-bottom:13px}
 .shelf-name{font-family:'Shippori Mincho',serif;font-size:15.5px;color:var(--ink);letter-spacing:.05em}
 .shelf-count{font-size:11.5px;color:var(--faint);letter-spacing:.04em}
-.spines{display:flex;gap:13px;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--hair)}
-.spine{position:relative;width:60px;min-height:162px;background:var(--surface2,#18223A);background:linear-gradient(180deg,#1a2336,#141b2b);border:1px solid var(--hair2);border-top:3px solid var(--accent);border-radius:7px;cursor:pointer;display:flex;align-items:flex-start;justify-content:center;padding:14px 6px 28px;transition:transform .14s,border-color .16s;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.spine:hover{transform:translateY(-4px);border-color:var(--accent)}
-.spine .t{writing-mode:vertical-rl;font-family:'Shippori Mincho',serif;font-size:15px;color:var(--ink);line-height:1.35;max-height:118px;overflow:hidden;letter-spacing:.05em;pointer-events:none}
-.spine .cnt{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--accent);font-weight:500;letter-spacing:.02em;pointer-events:none}
+.spines{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:18px 14px;padding-bottom:18px;border-bottom:1px solid var(--hair)}
+.spine{cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .14s}
+.spine:hover{transform:translateY(-3px)}
+.spine *{pointer-events:none}
+.bc-cover{position:relative;width:100%;aspect-ratio:2/3;border-radius:8px;overflow:hidden;background:linear-gradient(180deg,#1a2336,#121826);border:1px solid var(--hair2);display:flex;align-items:center;justify-content:center}
+.bc-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.bc-fallback{display:none;padding:10px;font-family:'Shippori Mincho',serif;font-size:13px;color:var(--ink);text-align:center;line-height:1.5;writing-mode:vertical-rl;max-height:88%;overflow:hidden;letter-spacing:.04em}
+.bc-cover.noimg{border-top:3px solid var(--accent)}
+.bc-cover.noimg .bc-fallback{display:block}
+.bc-title{font-family:'Shippori Mincho',serif;font-size:12.5px;color:var(--ink);line-height:1.45;margin-top:9px;max-height:37px;overflow:hidden;letter-spacing:.02em}
+.bc-stats{display:flex;align-items:center;gap:9px;margin-top:5px}
+.bc-n,.bc-rate{font-size:11px;color:var(--accent);font-weight:500;letter-spacing:.02em}
+.bc-rate{color:#D9B469}
 .spine.dragging{opacity:.3}
-.spine-clone{position:fixed;z-index:200;pointer-events:none;opacity:.94;transform:translate(-50%,-50%);box-shadow:0 14px 34px rgba(0,0,0,.55);margin:0;transition:none}
+.spine-clone{position:fixed;z-index:200;pointer-events:none;opacity:.95;width:104px;transform:translate(-50%,-50%);box-shadow:0 14px 34px rgba(0,0,0,.55);margin:0;transition:none}
 .shelf.drop-target .spines{box-shadow:inset 0 0 0 2px var(--accent);border-radius:10px}
 
 /* ===== 本の画面・上部バー ===== */
@@ -262,8 +270,27 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
     <input class="t" id="bTitle" placeholder="影響力の武器">
     <label class="fld">著者</label>
     <input class="t" id="bAuthor" placeholder="ロバート・チャルディーニ">
+    <label class="fld">表紙（任意・タイトルから自動取得できます）</label>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input class="t" id="bCover" placeholder="画像URL">
+      <button class="ghost" id="fetchCoverBtn" style="white-space:nowrap">自動取得</button>
+    </div>
+    <div id="coverPreview" style="margin-top:8px"></div>
     <label class="fld">棚</label>
     <select class="t" id="bShelf"></select>
+    <label class="fld">自己評価（任意）</label>
+    <select class="t" id="bRating">
+      <option value="">—</option>
+      <option value="5.0">★★★★★ 5.0</option>
+      <option value="4.5">★★★★☆ 4.5</option>
+      <option value="4.0">★★★★ 4.0</option>
+      <option value="3.5">★★★☆ 3.5</option>
+      <option value="3.0">★★★ 3.0</option>
+      <option value="2.5">★★☆ 2.5</option>
+      <option value="2.0">★★ 2.0</option>
+      <option value="1.5">★☆ 1.5</option>
+      <option value="1.0">★ 1.0</option>
+    </select>
     <label class="fld">NotebookLM のURL（任意）</label>
     <input class="t" id="bUrl" placeholder="https://notebooklm.google.com/notebook/...">
     <div class="mfoot">
@@ -366,7 +393,15 @@ function backToShelf(){
 /* ============ 本棚 ============ */
 function spineHTML(b){
   const n = loadCards(b.id).length;
-  return `<div class="spine" data-id="${b.id}"><span class="t">${esc(b.title)}</span><span class="cnt">${n?n+'文':'—'}</span></div>`;
+  const cover = b.cover
+    ? `<div class="bc-cover"><img src="${esc(b.cover)}" alt="" loading="lazy" onerror="this.closest('.bc-cover').classList.add('noimg');this.remove();"><span class="bc-fallback">${esc(b.title)}</span></div>`
+    : `<div class="bc-cover noimg"><span class="bc-fallback">${esc(b.title)}</span></div>`;
+  const rate = b.rating ? `<span class="bc-rate">★ ${esc(String(b.rating))}</span>` : '';
+  return `<div class="spine" data-id="${b.id}">
+    ${cover}
+    <div class="bc-title">${esc(b.title)}</div>
+    <div class="bc-stats"><span class="bc-n">${n?n+'文':'—'}</span>${rate}</div>
+  </div>`;
 }
 function renderShelfView(q){
   q = (q||'').trim();
@@ -488,6 +523,32 @@ function delCard(id){
   renderHighlights();
 }
 
+/* ============ 表紙の自動取得 ============ */
+async function fetchCover(title, author){
+  if(!title) return '';
+  try{
+    const q = encodeURIComponent(`intitle:${title}`+(author?` inauthor:${author}`:''));
+    const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=5&country=JP`);
+    if(!r.ok) return '';
+    const j = await r.json();
+    for(const it of (j.items||[])){
+      const img = it.volumeInfo && it.volumeInfo.imageLinks;
+      const u = img && (img.thumbnail || img.smallThumbnail);
+      if(u) return u.replace(/^http:/,'https:').replace('zoom=1','zoom=2').replace('&edge=curl','');
+    }
+  }catch(e){}
+  return '';
+}
+function showCoverPreview(u){
+  $('#coverPreview').innerHTML = u ? `<img src="${esc(u)}" alt="" style="height:120px;border-radius:6px;border:1px solid var(--hair2);object-fit:cover">` : '';
+}
+function applyCoverAutoFetch(b){
+  if(!b || b.cover) return;
+  fetchCover(b.title, b.author).then(u=>{
+    if(u && !b.cover){ b.cover=u; saveBooks(); if($('#shelfView').classList.contains('active')) renderShelfView($('#searchInput').value); }
+  });
+}
+
 /* ============ 本の追加・編集 ============ */
 let bookModalMode = 'add';
 function fillShelfSelect(current){
@@ -502,6 +563,8 @@ function openBookModal(mode){
   const b = mode==='edit' ? currentBook() : null;
   $('#bookModalTitle').textContent = mode==='edit' ? '本を編集' : '新しい本';
   $('#bTitle').value = b?b.title:''; $('#bAuthor').value = b?b.author:''; $('#bUrl').value = b?b.notebooklmUrl||'':'';
+  $('#bCover').value = b?b.cover||'':''; $('#bRating').value = b?b.rating||'':'';
+  showCoverPreview(b?b.cover||'':'');
   fillShelfSelect(b ? b.shelf : '');
   $('#deleteBookBtn').style.display = mode==='edit' ? 'inline-block' : 'none';
   $('#bookOv').classList.add('show'); $('#bTitle').focus();
@@ -510,15 +573,17 @@ function saveBookModal(){
   const title = $('#bTitle').value.trim();
   if(!title){ toast('書名を入れてください'); return; }
   const author=$('#bAuthor').value.trim(), url=$('#bUrl').value.trim();
+  const cover=$('#bCover').value.trim(), rating=$('#bRating').value;
   let shelf=$('#bShelf').value; if(shelf==='__new__') shelf='';
   if(bookModalMode==='edit'){
-    const b=currentBook(); if(b){ b.title=title; b.author=author; b.notebooklmUrl=url; b.shelf=shelf; }
+    const b=currentBook(); if(b){ b.title=title; b.author=author; b.notebooklmUrl=url; b.shelf=shelf; b.cover=cover; b.rating=rating; }
     saveBooks(); $('#bookOv').classList.remove('show');
-    openBook(currentBookId);
+    openBook(currentBookId); applyCoverAutoFetch(b);
   }else{
-    const id=uid(); books.push({id,title,author,status:'読書中',notebooklmUrl:url,shelf,created:Date.now()});
+    const id=uid(); const nb={id,title,author,status:'読書中',notebooklmUrl:url,shelf,cover,rating,created:Date.now()};
+    books.push(nb);
     saveBooks(); $('#bookOv').classList.remove('show');
-    openBook(id);
+    openBook(id); applyCoverAutoFetch(nb);
   }
 }
 function deleteBook(){
@@ -589,7 +654,7 @@ title: ${b.title}
 author: ${b.author||''}
 read_date: ${todayStr()}
 status: ${b.status||'読了'}
-rating:
+rating: ${b.rating||''}
 ---`;
   let body = `\n\n# 『${b.title}』${b.author||''}\n\n## 一言でいうと\n\n\n\n## 気づきハイライト\n`;
   cards.forEach(c=>{
@@ -742,6 +807,15 @@ $('#addBookBtn').addEventListener('click',()=>openBookModal('add'));
 $('#editBookBtn').addEventListener('click',()=>{ if(!currentBookId){ toast('本が選ばれていません'); return; } openBookModal('edit'); });
 $('#bookSaveBtn').addEventListener('click',saveBookModal);
 $('#bookCancelBtn').addEventListener('click',()=>$('#bookOv').classList.remove('show'));
+$('#fetchCoverBtn').addEventListener('click',async()=>{
+  const t=$('#bTitle').value.trim(); if(!t){ toast('先に書名を入れてください'); return; }
+  const btn=$('#fetchCoverBtn'); btn.textContent='取得中…'; btn.disabled=true;
+  const u=await fetchCover(t,$('#bAuthor').value.trim());
+  btn.textContent='自動取得'; btn.disabled=false;
+  if(u){ $('#bCover').value=u; showCoverPreview(u); toast('表紙を取得しました'); }
+  else toast('表紙が見つかりません。URLを貼ってください');
+});
+$('#bCover').addEventListener('input',e=>showCoverPreview(e.target.value.trim()));
 $('#deleteBookBtn').addEventListener('click',deleteBook);
 $('#bShelf').addEventListener('change',e=>{
   if(e.target.value==='__new__'){
