@@ -60,26 +60,34 @@ header{margin-bottom:28px}
 .more-menu button{display:block;width:100%;background:transparent;border:none;color:var(--ink);font-family:inherit;font-size:13.5px;padding:9px 14px;text-align:left;cursor:pointer;border-radius:7px;letter-spacing:.02em}
 .more-menu button:hover{background:var(--inset);color:var(--accent)}
 
-/* ===== 本棚 ===== */
-.shelf{margin-bottom:26px}
-.shelf-head{display:flex;align-items:baseline;gap:10px;margin-bottom:13px}
+/* ===== 本棚（リーダーズ・レジャー） ===== */
+.shelf{margin-bottom:30px}
+.shelf-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
 .shelf-name{font-family:'Shippori Mincho',serif;font-size:19px;font-weight:600;color:var(--ink);letter-spacing:.06em}
 .shelf-count{font-size:12px;color:var(--faint);letter-spacing:.04em;font-weight:400}
-.spines{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:18px 14px;padding-bottom:18px;border-bottom:1px solid var(--hair)}
-.spine{cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .14s}
-.spine:hover{transform:translateY(-3px)}
+.spines{display:flex;flex-direction:column}
+.spine{display:grid;grid-template-columns:54px 1fr;gap:16px;align-items:start;padding:18px 4px;border-bottom:1px solid var(--hair);cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.spine:last-child{border-bottom:none}
 .spine *{pointer-events:none}
-.bc-cover{position:relative;width:100%;aspect-ratio:2/3;border-radius:8px;overflow:hidden;background:#f0ece4;border:1px solid var(--hair2);display:flex;align-items:center;justify-content:center}
-.bc-cover img{width:100%;height:100%;object-fit:cover;display:block}
-.bc-fallback{display:none;padding:10px;font-family:'Shippori Mincho',serif;font-size:13px;color:var(--ink);text-align:center;line-height:1.5;writing-mode:vertical-rl;max-height:88%;overflow:hidden;letter-spacing:.04em}
-.bc-cover.noimg{border-top:3px solid var(--accent)}
-.bc-cover.noimg .bc-fallback{display:block}
-.bc-title{font-family:'Shippori Mincho',serif;font-size:12.5px;color:var(--ink);line-height:1.5;margin-top:9px;height:38px;overflow:hidden;letter-spacing:.02em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.bc-stats{display:flex;align-items:center;gap:9px;margin-top:5px}
-.bc-n,.bc-rate{font-size:11px;color:var(--accent);font-weight:500;letter-spacing:.02em}
-.bc-rate{color:#D9B469}
+/* 表紙サムネ：A案（多層シャドウ＋ホバー浮き上がり） */
+.lg-cv{position:relative;width:54px;aspect-ratio:2/3;border-radius:6px;overflow:hidden;background:#f0ece4;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.35);transition:transform .2s ease,box-shadow .2s ease}
+.spine:hover .lg-cv{transform:translateY(-5px);box-shadow:0 16px 38px rgba(0,0,0,.62),0 4px 12px rgba(0,0,0,.42)}
+.lg-cv img{width:100%;height:100%;object-fit:cover;display:block}
+.lg-cv.noimg{background:linear-gradient(180deg,#1a2336,#121826);border-top:2px solid var(--accent)}
+.lg-body{min-width:0}
+.lg-top{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.lg-bt{font-family:'Shippori Mincho',serif;font-size:15.5px;font-weight:600;color:var(--ink);letter-spacing:.03em}
+.lg-au{font-size:10.5px;color:var(--faint);white-space:nowrap}
+.lg-right{margin-left:auto;display:flex;gap:9px;align-items:baseline;white-space:nowrap}
+.lg-n{font-size:10.5px;color:var(--accent);letter-spacing:.06em}
+.lg-n.none{color:var(--faint)}
+.lg-rate{font-size:10.5px;color:#D9B469}
+.lg-quote{font-family:'Shippori Mincho',serif;font-size:13.5px;color:var(--sub);line-height:1.85;letter-spacing:.02em;position:relative;padding-left:15px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lg-quote::before{content:'“';position:absolute;left:-1px;top:-3px;color:var(--accent);opacity:.5;font-size:19px;font-family:'Shippori Mincho',serif}
+.lg-quote.lg-empty{padding-left:0;color:var(--faint);font-family:'Noto Sans JP',sans-serif;font-size:11.5px}
+.lg-quote.lg-empty::before{content:none}
 .spine.dragging{opacity:.3}
-.spine-clone{position:fixed;z-index:200;pointer-events:none;opacity:.95;width:104px;transform:translate(-50%,-50%);box-shadow:0 14px 34px rgba(0,0,0,.55);margin:0;transition:none}
+.spine-clone{position:fixed;z-index:200;pointer-events:none;opacity:.95;transform:translate(-50%,-50%);background:var(--panel-solid);border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.55);margin:0;padding:10px 14px;transition:none}
 .shelf.drop-target .spines{box-shadow:inset 0 0 0 2px var(--accent);border-radius:10px}
 
 /* ===== 本の画面・上部バー ===== */
@@ -420,16 +428,25 @@ function backToShelf(){
 
 /* ============ 本棚 ============ */
 function spineHTML(b){
-  const n = loadCards(b.id).length;
+  const cards = loadCards(b.id);
+  const n = cards.length;
+  let latest = '';
+  for(let i=cards.length-1; i>=0; i--){ if(cards[i].quote){ latest = cards[i].quote; break; } }
   const cover = b.cover
-    ? `<div class="bc-cover"><img src="${esc(b.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.bc-cover').classList.add('noimg');this.remove();"><span class="bc-fallback">${esc(b.title)}</span></div>`
-    : `<div class="bc-cover noimg"><span class="bc-fallback">${esc(b.title)}</span></div>`;
-  const rate = b.rating ? `<span class="bc-rate">★ ${esc(String(b.rating))}</span>` : '';
-  const statsInner = `${n?`<span class="bc-n">${n}文</span>`:''}${rate}`;
+    ? `<div class="lg-cv"><img src="${esc(b.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.lg-cv').classList.add('noimg');this.remove();"></div>`
+    : `<div class="lg-cv noimg"></div>`;
+  const au = b.author ? `<span class="lg-au">${esc(b.author)}</span>` : '';
+  const rate = b.rating ? `<span class="lg-rate">★ ${esc(String(b.rating))}</span>` : '';
+  const cnt = n ? `<span class="lg-n">${n}文</span>` : `<span class="lg-n none">未記録</span>`;
+  const quote = latest
+    ? `<div class="lg-quote">${esc(latest)}</div>`
+    : `<div class="lg-quote lg-empty">まだ一文がありません</div>`;
   return `<div class="spine" data-id="${b.id}">
     ${cover}
-    <div class="bc-title">${esc(b.title)}</div>
-    ${statsInner?`<div class="bc-stats">${statsInner}</div>`:''}
+    <div class="lg-body">
+      <div class="lg-top"><span class="lg-bt">${esc(b.title)}</span>${au}<span class="lg-right">${rate}${cnt}</span></div>
+      ${quote}
+    </div>
   </div>`;
 }
 function renderShelfView(q){
@@ -836,7 +853,7 @@ $('#searchInput').addEventListener('input',e=>renderShelfView(e.target.value));
         let beforeId=null;
         if(overSpine && overSpine.dataset.id!==drag.id){
           const r=overSpine.getBoundingClientRect();
-          beforeId=(x < r.left + r.width/2) ? overSpine.dataset.id : nextSpineId(overSpine);
+          beforeId=(y < r.top + r.height/2) ? overSpine.dataset.id : nextSpineId(overSpine);
         }
         moveBook(drag.id, targetShelf, beforeId);
         renderShelfView($('#searchInput').value);
