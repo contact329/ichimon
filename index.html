@@ -91,11 +91,67 @@ header{margin-bottom:28px}
 .shelf.drop-target .spines{box-shadow:inset 0 0 0 2px var(--accent);border-radius:10px}
 
 /* ===== 本の画面・上部バー ===== */
-.book-bar2{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
-.book-bar2 .btitle{font-family:'Shippori Mincho',serif;font-size:20px;color:var(--ink);letter-spacing:.04em;flex:1;min-width:120px}
 .backbtn{background:transparent;border:1px solid var(--hair2);color:var(--sub);font-size:13px;padding:8px 13px;border-radius:10px;cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:.16s;white-space:nowrap}
 .backbtn:hover{border-color:var(--accent);color:var(--ink)}
-.bv-shelf{font-size:11px;color:var(--accent);letter-spacing:.06em;margin-bottom:22px;min-height:14px}
+
+/* 本のヘッダー（案C） */
+.bh{display:flex;gap:18px;align-items:flex-start;padding:18px 2px 22px;border-bottom:1px solid var(--hair);margin:16px 0 22px}
+.bh-cv{width:66px;aspect-ratio:2/3;border-radius:7px;overflow:hidden;flex:none;background:#f0ece4;box-shadow:0 10px 28px rgba(0,0,0,.55),0 3px 8px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center}
+.bh-cv img{width:100%;height:100%;object-fit:cover;display:block}
+.bh-cv.noimg{background:linear-gradient(180deg,#1a2336,#121826);border-top:2px solid var(--accent)}
+.bh-main{flex:1;min-width:0}
+.bh-shelf{font-size:10.5px;color:var(--accent);letter-spacing:.14em;margin-bottom:7px}
+.bh-title{font-family:'Shippori Mincho',serif;font-size:23px;font-weight:700;color:var(--ink);letter-spacing:.04em;line-height:1.4}
+.bh-author{font-size:12px;color:var(--sub);margin-top:6px;letter-spacing:.04em}
+.bh-stats{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
+.bh-stat{font-size:11px;color:var(--faint);letter-spacing:.06em}
+.bh-stat b{font-family:'Shippori Mincho',serif;font-size:18px;color:var(--accent);font-weight:600;margin-right:3px}
+.bh-acts{display:flex;flex-direction:column;gap:8px;flex:none}
+.bh-acts .ghost{white-space:nowrap}
+.bh-acts .ghost.accent{border-color:rgba(224,168,95,.4);color:var(--accent)}
+@media(max-width:520px){.bh{flex-wrap:wrap}.bh-acts{flex-direction:row;width:100%;margin-top:6px}}
+
+/* NotebookLM 折りたたみ（案C） */
+.nb-collapsed{display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--inset);border:1px solid var(--hair);border-radius:12px;margin-bottom:16px;cursor:pointer;transition:border-color .16s}
+.nb-collapsed:hover{border-color:var(--hair2)}
+.nb-collapsed .ic{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+.nb-collapsed .lb{font-size:12.5px;color:var(--ink);letter-spacing:.04em}
+.nb-collapsed .meta{font-size:11px;color:var(--faint);margin-left:auto;letter-spacing:.04em}
+#nbCard{display:none}
+#nbCard.open{display:block}
+
+/* 一文キャプチャ（案B） */
+.cap-step{display:flex;align-items:baseline;gap:11px;margin-bottom:13px}
+.cap-step .no{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--accent);letter-spacing:.05em;flex:none}
+.cap-step .lb{font-size:13px;color:var(--ink);letter-spacing:.04em}
+.cap-step .lb .req{color:var(--accent);font-size:11px;margin-left:3px}
+.cap-block{margin-top:24px}
+textarea.cap-q{font-family:'Shippori Mincho',serif;font-size:18px;line-height:1.9;min-height:84px}
+textarea.cap-why{font-family:inherit;font-size:14.5px;line-height:1.75;min-height:62px;border-color:rgba(224,168,95,.3);background:var(--accent-soft)}
+textarea.cap-why::placeholder{color:rgba(224,168,95,.45)}
+textarea.cap-sub{font-size:14px;line-height:1.7;min-height:52px}
+.cap-row{display:flex;gap:14px;margin-top:24px;flex-wrap:wrap}
+.cap-row > div{flex:1;min-width:140px}
+.cap-row .page{max-width:140px;flex:none}
+.cap-foot{display:flex;align-items:center;gap:14px;margin-top:28px;flex-wrap:wrap}
+.cap-kbd{font-size:11px;color:var(--faint);letter-spacing:.04em}
+.cap-kbd b{color:var(--sub);font-weight:500}
+.cap-hint{font-size:11.5px;color:var(--accent);letter-spacing:.04em}
+
+/* 引用カード（案A：保存した一文） */
+.qc{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.012));border:1px solid var(--hair);border-radius:14px;padding:26px 26px 20px;margin-bottom:14px;overflow:hidden;transition:border-color .16s}
+.qc:hover{border-color:var(--hair2)}
+.qc::before{content:'“';position:absolute;top:6px;left:18px;font-family:'Shippori Mincho',serif;font-size:58px;color:var(--accent);opacity:.16;line-height:1;pointer-events:none}
+.qc-q{font-family:'Shippori Mincho',serif;font-size:18px;line-height:1.95;color:var(--ink);letter-spacing:.03em;position:relative;padding-left:8px}
+.qc-pg{font-size:11px;color:var(--faint);margin-left:7px;letter-spacing:.04em}
+.qc-why{margin-top:18px;padding-left:14px;border-left:2px solid rgba(224,168,95,.5);font-size:13px;color:var(--accent);line-height:1.8}
+.qc-why .lbl{display:block;font-size:9.5px;letter-spacing:.16em;opacity:.7;margin-bottom:3px}
+.qc-ins{margin-top:12px;padding-left:14px;border-left:2px solid var(--hair2);font-size:12.5px;color:var(--sub);line-height:1.8}
+.qc-ins .lbl{display:block;font-size:9.5px;letter-spacing:.16em;color:var(--faint);margin-bottom:3px}
+.qc-foot{display:flex;align-items:center;gap:8px;margin-top:20px;padding-top:14px;border-top:1px solid var(--hair);flex-wrap:wrap}
+.qc-acts{margin-left:auto;display:flex;gap:4px}
+.qc-acts span{color:var(--faint);font-size:11.5px;padding:4px 9px;border-radius:7px;cursor:pointer}
+.qc-acts span:hover{color:var(--accent);background:var(--inset)}
 
 /* ===== カード共通 ===== */
 .card{background:var(--panel);border:1px solid var(--hair);border-radius:15px;padding:24px 24px 26px;margin-bottom:16px;backdrop-filter:blur(6px)}
@@ -125,15 +181,7 @@ select.t{resize:none;cursor:pointer}
 select.t option{background:#1a2235;color:var(--ink)}
 textarea::placeholder,input.t::placeholder{color:#727E96}
 textarea:focus,input.t:focus,select.t:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-textarea.quote{font-family:'Shippori Mincho',serif;font-size:17px;min-height:70px;color:var(--ink);line-height:1.8}
-
-.why-wrap{background:var(--accent-soft);border:1px solid rgba(224,168,95,.20);border-radius:12px;padding:16px;margin:18px 0}
-.why-wrap label.fld{margin:0 0 9px;color:var(--accent);font-size:12.5px;font-weight:400;letter-spacing:.03em}
-.why-wrap textarea{border-color:rgba(224,168,95,.22);background:rgba(9,12,20,.4)}
-.why-wrap textarea:focus{box-shadow:0 0 0 3px rgba(224,168,95,.14)}
-
-.row2{display:flex;gap:10px;flex-wrap:wrap}
-.row2 > div{flex:1;min-width:120px}
+textarea.cap-why:focus{box-shadow:0 0 0 3px rgba(224,168,95,.14)}
 
 .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:2px}
 .chip{border:1px solid var(--hair2);background:transparent;color:var(--sub);padding:6px 13px;border-radius:999px;font-size:12.5px;font-weight:400;cursor:pointer;user-select:none;letter-spacing:.02em;transition:.14s}
@@ -144,9 +192,6 @@ textarea.quote{font-family:'Shippori Mincho',serif;font-size:17px;min-height:70p
 #conceptSuggest .chip{padding:5px 12px;font-size:12px;color:var(--cool);border-color:var(--hair)}
 #conceptSuggest .chip:hover{border-color:var(--cool);color:var(--cool)}
 #conceptSuggest .chip::before{content:"＋ ";opacity:.45}
-
-.form-foot{display:flex;gap:10px;align-items:center;margin-top:22px}
-.form-foot .hint{color:var(--accent);font-size:11.5px;margin-left:auto;letter-spacing:.06em}
 
 /* ===== ハイライト一覧 ===== */
 .hl-list{display:flex;flex-direction:column;gap:10px}
@@ -222,16 +267,30 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
 
   <!-- ===== 本の画面 ===== -->
   <div class="view" id="bookView">
-    <div class="book-bar2">
-      <button class="backbtn" id="backBtn">← 本棚</button>
-      <div class="btitle" id="bvTitle"></div>
-      <button class="ghost sm" id="editBookBtn">編集</button>
-      <button class="ghost sm" id="exportBtn">イケスに書き出す</button>
-    </div>
-    <div class="bv-shelf" id="bvShelf"></div>
+    <button class="backbtn" id="backBtn">← 本棚</button>
 
+    <!-- 本のヘッダー（案C） -->
+    <div class="bh">
+      <div class="bh-cv" id="bhCover"></div>
+      <div class="bh-main">
+        <div class="bh-shelf" id="bhShelf"></div>
+        <div class="bh-title" id="bhTitle"></div>
+        <div class="bh-author" id="bhAuthor"></div>
+        <div class="bh-stats" id="bhStats"></div>
+      </div>
+      <div class="bh-acts">
+        <button class="ghost sm accent" id="exportBtn">イケスに書き出す</button>
+        <button class="ghost sm" id="editBookBtn">編集</button>
+      </div>
+    </div>
+
+    <!-- NotebookLM 折りたたみ（案C） -->
+    <div class="nb-collapsed" id="nbToggle">
+      <span class="ic"></span>
+      <span class="lb">NotebookLM / リサーチ</span>
+      <span class="meta" id="nbToggleMeta">開く ＋ プロンプト ▾</span>
+    </div>
     <div class="card" id="nbCard">
-      <div class="card-title"><span class="bar"></span>NotebookLM / リサーチ</div>
       <div class="nb-row">
         <button class="ghost sm" id="openNbBtn">この本を NotebookLM で開く</button>
       </div>
@@ -247,34 +306,39 @@ pre.md{background:var(--bg2);border:1px solid var(--hair);border-radius:10px;pad
       </div>
     </div>
 
+    <!-- 一文を残す（案B） -->
     <div class="card" id="captureCard">
       <div class="card-title"><span class="bar"></span>一文を残す</div>
 
-      <label class="fld">印象に残った一文 <span class="req">＊</span></label>
-      <textarea class="quote" id="fQuote" placeholder="本の中で心に留まった一文・要約を貼る／書く"></textarea>
+      <div class="cap-step"><span class="no">一</span><span class="lb">印象に残った一文<span class="req">＊</span></span></div>
+      <textarea class="t cap-q" id="fQuote" placeholder="本の中で心に留まった一文を、そのまま。"></textarea>
 
-      <div class="why-wrap">
-        <label class="fld">なぜ印象に残ったか <span class="req">＊</span></label>
-        <textarea id="fWhy" rows="2" placeholder="どこが引っかかった？　驚いた／腑に落ちた／反発した… その理由を一行で"></textarea>
+      <div class="cap-block">
+        <div class="cap-step"><span class="no">二</span><span class="lb">なぜ、残ったのか<span class="req">＊</span></span></div>
+        <textarea class="t cap-why" id="fWhy" placeholder="驚いた／腑に落ちた／反発した — その理由を一行で。"></textarea>
       </div>
 
-      <label class="fld">自分の領域への示唆</label>
-      <textarea id="fInsight" rows="2" placeholder="自分の仕事にどう活かす？"></textarea>
+      <div class="cap-block">
+        <div class="cap-step"><span class="no">三</span><span class="lb">自分の領域への示唆</span></div>
+        <textarea class="t cap-sub" id="fInsight" placeholder="自分の仕事にどう活かす？（任意）"></textarea>
+      </div>
 
-      <label class="fld">概念タグ（[[ ]]で囲われる・任意）</label>
-      <input class="t" id="fConcepts" placeholder="損失回避, 希少性">
-      <div class="chips" id="conceptSuggest"></div>
-
-      <div class="row2" style="margin-top:14px">
+      <div class="cap-row">
         <div>
-          <label class="fld">ページ（任意）</label>
+          <div class="cap-step"><span class="lb" style="font-size:12px;color:var(--sub)">概念タグ（[[ ]]で囲われる・任意）</span></div>
+          <input class="t" id="fConcepts" placeholder="損失回避, 希少性">
+          <div class="chips" id="conceptSuggest"></div>
+        </div>
+        <div class="page">
+          <div class="cap-step"><span class="lb" style="font-size:12px;color:var(--sub)">ページ</span></div>
           <input class="t" id="fPage" placeholder="p.45" inputmode="numeric">
         </div>
       </div>
 
-      <div class="form-foot">
-        <button class="cta" id="saveCardBtn">カードを保存</button>
-        <span class="hint" id="editingHint"></span>
+      <div class="cap-foot">
+        <button class="cta" id="saveCardBtn">一文を残す</button>
+        <span class="cap-kbd"><b>⌘ / Ctrl + Enter</b> でも保存</span>
+        <span class="hint cap-hint" id="editingHint"></span>
       </div>
     </div>
 
@@ -415,8 +479,17 @@ function showView(v){
 function openBook(id){
   currentBookId = id; editingCardId = null;
   const b = currentBook(); if(!b) return;
-  $('#bvTitle').textContent = b.title + (b.author ? ' — '+b.author : '');
-  $('#bvShelf').textContent = (b.shelf && shelves.includes(b.shelf)) ? '棚：'+b.shelf : '棚：未分類';
+  const cov = $('#bhCover');
+  if(b.cover){ cov.className='bh-cv'; cov.innerHTML = `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" onerror="this.closest('.bh-cv').classList.add('noimg');this.remove();">`; }
+  else { cov.className='bh-cv noimg'; cov.innerHTML=''; }
+  $('#bhShelf').textContent = (b.shelf && shelves.includes(b.shelf)) ? b.shelf : '未分類';
+  $('#bhTitle').textContent = b.title;
+  $('#bhAuthor').textContent = b.author || '';
+  const n = loadCards(id).length;
+  const rate = b.rating ? `<span class="bh-stat"><b>★</b>${esc(String(b.rating))}</span>` : '';
+  $('#bhStats').innerHTML = `<span class="bh-stat"><b>${n}</b>文</span>${rate}`;
+  $('#nbCard').classList.remove('open');
+  $('#nbToggleMeta').textContent = '開く ＋ プロンプト ▾';
   resetForm(); renderHighlights();
   showView('book');
 }
@@ -514,14 +587,14 @@ function renderHighlights(){
     renderConceptSuggest(); return;
   }
   list.innerHTML = cards.map(c=>{
-    const concepts = (c.concepts||[]).map(x=>`<span class="tag">[[${esc(x)}]]</span>`).join('');
-    return `<div class="hl" data-id="${c.id}">
-      <div class="q">${esc(c.quote)}${c.page?`<span class="pg">（p.${esc(c.page)}）</span>`:''}</div>
-      ${c.why?`<div class="why">${esc(c.why)}</div>`:''}
-      ${c.insight?`<div class="ins">${esc(c.insight)}</div>`:''}
-      <div class="meta">
+    const concepts = (c.concepts||[]).map(x=>`<span class="qc-tag tag">[[${esc(x)}]]</span>`).join('');
+    return `<div class="qc" data-id="${c.id}">
+      <div class="qc-q">${esc(c.quote)}${c.page?`<span class="qc-pg">p.${esc(c.page)}</span>`:''}</div>
+      ${c.why?`<div class="qc-why"><span class="lbl">なぜ刺さったか</span>${esc(c.why)}</div>`:''}
+      ${c.insight?`<div class="qc-ins"><span class="lbl">自分の領域への示唆</span>${esc(c.insight)}</div>`:''}
+      <div class="qc-foot">
         ${concepts}
-        <span class="acts"><span data-act="edit" data-id="${c.id}">編集</span><span data-act="del" data-id="${c.id}">削除</span></span>
+        <span class="qc-acts"><span data-act="edit" data-id="${c.id}">編集</span><span data-act="del" data-id="${c.id}">削除</span></span>
       </div>
     </div>`;
   }).join('');
@@ -532,7 +605,7 @@ function renderHighlights(){
 function resetForm(){
   $('#fQuote').value=''; $('#fWhy').value=''; $('#fInsight').value=''; $('#fConcepts').value=''; $('#fPage').value='';
   editingCardId=null; $('#editingHint').textContent='';
-  $('#saveCardBtn').textContent='カードを保存';
+  $('#saveCardBtn').textContent='一文を残す';
   renderConceptSuggest();
 }
 function saveCard(){
@@ -930,6 +1003,10 @@ $('#fConcepts').addEventListener('input',renderConceptSuggest);
 $('#saveCardBtn').addEventListener('click',saveCard);
 $('#hlList').addEventListener('click',e=>{ const act=e.target.dataset.act, id=e.target.dataset.id; if(act==='edit') editCard(id); if(act==='del') delCard(id); });
 $('#nbCard').addEventListener('click',e=>{ const k=e.target.dataset.p; if(k) copyNamedPrompt(k); });
+$('#nbToggle').addEventListener('click',()=>{
+  const open = $('#nbCard').classList.toggle('open');
+  $('#nbToggleMeta').textContent = open ? '閉じる ▴' : '開く ＋ プロンプト ▾';
+});
 $('#openNbBtn').addEventListener('click',openNotebook);
 $('#exportBtn').addEventListener('click',openExport);
 $('#exportCancelBtn').addEventListener('click',()=>$('#exportOv').classList.remove('show'));
